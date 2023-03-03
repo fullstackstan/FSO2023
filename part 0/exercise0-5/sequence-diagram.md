@@ -33,4 +33,5 @@ sequenceDiagram
     activate server
     server-->>browser: data.json
     deactivate server
+    
     ```
