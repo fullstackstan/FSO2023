@@ -23,7 +23,7 @@ sequenceDiagram
     
     note right of browser: browser processes html and sees script tag 
 
-    browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/main.js
+    browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/spa.js
     activate server
     server-->>browser: spa.js
     deactivate server
