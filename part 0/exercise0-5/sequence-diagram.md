@@ -1,3 +1,4 @@
+
 ```mermaid
 sequenceDiagram
     participant browser
@@ -33,5 +34,4 @@ sequenceDiagram
     activate server
     server-->>browser: data.json
     deactivate server
-    
-    ```
+   ```
