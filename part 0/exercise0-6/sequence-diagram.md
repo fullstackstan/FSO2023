@@ -12,4 +12,6 @@ sequenceDiagram
     activate server
     server-->>browser: receives status code 201
     deactivate server
+    
+    note right of browser: browser runs js code and redraws the page based on the updated data.json
 ```
