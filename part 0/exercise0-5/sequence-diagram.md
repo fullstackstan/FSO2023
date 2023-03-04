@@ -30,4 +30,6 @@ sequenceDiagram
     activate server
     server-->>browser: data.json
     deactivate server
+    
+    note right of browser: browser processes js and data.json and displays contents on screen
    ```
