@@ -3,11 +3,7 @@
 sequenceDiagram
     participant browser
     participant server
-
-    note right of browser: user enters text and hits submit
     
-    
-
     browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/notes
     activate server
     server-->>browser: receives spa.html
@@ -34,4 +30,6 @@ sequenceDiagram
     activate server
     server-->>browser: data.json
     deactivate server
+    
+    note right of browser: browser processes js and data.json and displays contents on screen
    ```
