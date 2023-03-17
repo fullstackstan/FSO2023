@@ -5,21 +5,32 @@ const Statistics = ({good,neutral,bad}) => {
 
   if (totalVotes===0){
     return (
-      <>
-      <h4>No Votes Have Been Entered Yet</h4>
-      </>
+      <h4>No Votes Entered Yet</h4>
     )
-    }
+  }
+  return(
+    <div>
+      <h2>Statistics</h2>
+      <table>
+      <StatisticLine text="good" value ={good} />
+      <StatisticLine text="neutral" value ={neutral} />
+      <StatisticLine text="bad" value ={bad} />
+      <StatisticLine text="total votes" value ={totalVotes} />
+      <StatisticLine text="average" value ={(good+(-bad))/totalVotes} />
+      <StatisticLine text="percent positive" value ={(good/totalVotes)*100}  percent={'%'} />
+      </table>
+    </div>
+  )
+}
+
+const StatisticLine = ({text,value,percent})=>{
   return (
-    <>
-    <h2>unicafe reviews totals</h2>
-      good {good}<br/>
-      neutral {neutral}<br/>
-      bad {bad}<br/>
-      all {totalVotes}<br/>
-      average score {(good+(-bad))/totalVotes} <br/>
-      positive {(good/totalVotes)*100} %
-      </>
+    <tbody>
+    <tr>
+    <td>{text}</td><td> {value} {percent}</td>
+    </tr>
+    </tbody>
+
   )
 }
 
@@ -57,18 +68,14 @@ const App = () => {
     setBad(newTotal) 
        
     }
-    
-  
 
-
-  
-  
   return (
     <div>
       <h2>unicafe reviews</h2>
     <Button handleClick={goodClick} text={"good"}/>
     <Button handleClick={neutralClick} text={"neutral"}/>
     <Button handleClick={badClick} text={"bad"}/>
+    <br/>
     <Statistics good={good} neutral={neutral} bad={bad} />
       
     </div>
