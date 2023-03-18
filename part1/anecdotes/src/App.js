@@ -9,7 +9,7 @@ const MostVotes = ({anecdotes,voteArray,selected})=>{
     }
 
     let index = voteArray.indexOf(Math.max(...voteArray));
-  
+    
   return (
     <>
     <h2>Most Voted Anecdote</h2>
