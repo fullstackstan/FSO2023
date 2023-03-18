@@ -1,68 +1,78 @@
-const Header = (props)=>{
+const Header = ({ name }) => {
   return (
     <>
-    <h1>{props.course.name}</h1>
+      <h1>{name}</h1>
     </>
-  )
-}
+  );
+};
 
-const Part = (props)=>{
+const Part = ({ course }) => {
   return (
-    <>
-    {props.part} contains {props.count} exercises
-    </>
-  )
-}
+    <ul>
+      {course.parts.map((part) => (
+        <li key={part.id}>
+          {part.name} contains {part.exercises} exercises
+        </li>
+      ))}
+    </ul>
+  );
+};
 
-const Content = (props) => {
+const Content = ({ course }) => {
   return (
     <>
-     <Part part={props.course.parts[0].name} count={props.course.parts[0].exercises}/> <br />
-    <Part part={props.course.parts[1].name} count={props.course.parts[1].exercises}/><br />
-    <Part part={props.course.parts[2].name} count={props.course.parts[2].exercises}/> 
+      <Part course={course} />
     </>
-  )
-}
+  );
+};
 
-const Total = (props)=>{
+const Total = (props) => {
   return (
     <>
-    Total Number of Exercises is {props.course.parts[0].exercises+props.course.parts[1].exercises+props.course.parts[2].exercises}
+      Total Number of Exercises is{" "}
+      {props.course.parts[0].exercises +
+        props.course.parts[1].exercises +
+        props.course.parts[2].exercises}
     </>
-  )
-}
+  );
+};
+
+const Course = ({ course }) => {
+  return (
+    <>
+      <Header name={course.name} />
+      <br />
+      <Content course={course} />
+      <br />
+    </>
+  );
+};
 
 const App = () => {
   const course = {
-    name: 'Half Stack application development',
+    id: 1,
+    name: "Half Stack application development",
     parts: [
       {
-        name: 'Fundamentals of React',
-        exercises: 10
+        name: "Fundamentals of React",
+        exercises: 10,
+        id: 1,
       },
       {
-        name: 'Using props to pass data',
-        exercises: 7
+        name: "Using props to pass data",
+        exercises: 7,
+        id: 2,
       },
       {
-        name: 'State of a component',
-        exercises: 14
-      }
-    ]
-  }
+        name: "State of a component",
+        exercises: 14,
+        id: 3,
+      },
+    ],
+  };
 
-  return (
-    <div>
-      <Header course={course}/>
-      <p>
-        <Content course={course} />
-      </p>
-      <h4>
-        <Total course={course} />
-      </h4>
-    </div>
-  )
-}
+  return <Course course={course} />;
+};
 
 // const App = () => {
 //   const course = 'Half Stack application development'
@@ -152,4 +162,4 @@ const App = () => {
 // }
 //! exercise 1-2
 
-export default App
+export default App;
