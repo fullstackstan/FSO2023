@@ -14,6 +14,7 @@ const MostVotes = ({anecdotes,voteArray,selected})=>{
     <>
     <h2>Most Voted Anecdote</h2>
     {anecdotes[index]}
+    totalVotes {voteArray[index]}
     </>
   )
 }
