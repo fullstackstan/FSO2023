@@ -13,6 +13,13 @@ const App = () => {
 
   const handleSubmit = (event)=>{
     event.preventDefault()
+    for (let i=0;i<persons.length;i++){
+      if (persons[i].name===newName){
+        alert(`${newName} is already in the phone book`)
+        setNewName('')
+        return
+      }
+    }
     const personObject = {
       name: newName,
     }
