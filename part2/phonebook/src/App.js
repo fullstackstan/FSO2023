@@ -14,7 +14,14 @@ const Filter = ({ filterName, setFilterName }) => {
   );
 };
 
-const PersonForm = ({setPersons, persons ,newName, newNumber, setNewName, setNewNumber }) => {
+const PersonForm = ({
+  setPersons,
+  persons,
+  newName,
+  newNumber,
+  setNewName,
+  setNewNumber,
+}) => {
   const handleNameChange = (event) => {
     setNewName(event.target.value);
     console.log(event.target.value);
@@ -61,17 +68,17 @@ const PersonForm = ({setPersons, persons ,newName, newNumber, setNewName, setNew
   );
 };
 
-const Persons = ({filteredPersons})=>{
-  return(
+const Persons = ({ filteredPersons }) => {
+  return (
     <>
-    {filteredPersons.map((person) => (
+      {filteredPersons.map((person) => (
         <li key={person.id}>
           {person.name} {person.number}
         </li>
       ))}
     </>
-  )
-}
+  );
+};
 
 const App = () => {
   const [persons, setPersons] = useState([
@@ -83,8 +90,6 @@ const App = () => {
   const [filterName, setFilterName] = useState("");
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
-
-  
 
   const filteredPersons = persons.filter((person) =>
     person.name.toLowerCase().includes(filterName.toLowerCase())
@@ -113,33 +118,5 @@ const App = () => {
     </div>
   );
 };
-//   return (
-//     <div>
-//       <h2>Phonebook</h2>
-//       <div>
-//         filter shown with:{" "}
-//         <input value={filterName} onChange={handleFilterChange} />
-//       </div>
-//       <h4>add a new entry</h4>
-      // <form onSubmit={handleSubmit}>
-      //   <div>
-      //     name: <input value={newName} onChange={handleNameChange} />
-      //   </div>
-      //   <div>
-      //     number: <input value={newNumber} onChange={handleNumberChange} />
-      //   </div>
-      //   <div>
-      //     <button type="submit">add</button>
-      //   </div>
-      // </form>
-//       <h2>Numbers</h2>
-      // {filteredPersons.map((person) => (
-      //   <li key={person.id}>
-      //     {person.name} {person.number}
-      //   </li>
-      // ))}
-//     </div>
-//   );
-// };
 
 export default App;
