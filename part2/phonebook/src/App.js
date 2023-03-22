@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios  from "axios";
+import axios from "axios";
 
 const Filter = ({ filterName, setFilterName }) => {
   const handleFilterChange = (event) => {
@@ -45,11 +45,12 @@ const PersonForm = ({
     const personObject = {
       name: newName,
       number: newNumber,
-      id: persons.length + 1,
     };
-    setPersons(persons.concat(personObject));
-    setNewName("");
-    setNewNumber("");
+    axios.post("http://localhost:3001/persons", personObject).then((response) => {
+      setPersons(persons.concat(response.data));
+      setNewName("");
+      setNewNumber("");
+    });
   };
 
   return (
@@ -92,13 +93,12 @@ const App = () => {
   );
 
   useEffect(() => {
-    console.log('effect')
-    axios
-      .get('http://localhost:3001/persons').then(response => {
-        console.log('promise fulfilled')
-        setPersons(response.data)
-      })
-  }, [])
+    console.log("effect");
+    axios.get("http://localhost:3001/persons").then((response) => {
+      console.log("promise fulfilled");
+      setPersons(response.data);
+    });
+  }, []);
 
   return (
     <div>
