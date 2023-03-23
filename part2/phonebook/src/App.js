@@ -34,24 +34,42 @@ const PersonForm = ({
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    for (let i = 0; i < persons.length; i++) {
-      if (persons[i].name === newName) {
-        alert(`${newName} is already in the phone book`);
+    const existingPerson = persons.find((person) => person.name === newName);
+    if (existingPerson) {
+      const confirmUpdate = window.confirm(
+        `${newName} is already in the phone book. Replace the old number with the new one?`
+      );
+      if (confirmUpdate) {
+        const updatedPerson = { ...existingPerson, number: newNumber };
+        personService
+          .update(existingPerson.id, updatedPerson)
+          .then((response) => {
+            setPersons(
+              persons.map((person) =>
+                person.id !== existingPerson.id ? person : response.data
+              )
+            );
+            setNewName("");
+            setNewNumber("");
+          })
+          .catch((error) => {
+            console.log(error.response.data.error);
+            alert(error.response.data.error);
+          });
+      }
+    } else {
+      const personObject = {
+        name: newName,
+        number: newNumber,
+      };
+      personService.create(personObject).then((response) => {
+        setPersons(persons.concat(response.data));
         setNewName("");
         setNewNumber("");
-        return;
-      }
+      });
     }
-    const personObject = {
-      name: newName,
-      number: newNumber,
-    };
-    personService.create(personObject).then((response) => {
-      setPersons(persons.concat(response.data));
-      setNewName("");
-      setNewNumber("");
-    });
   };
+  
 
   return (
     <>
@@ -70,14 +88,29 @@ const PersonForm = ({
   );
 };
 
-const Persons = ({ filteredPersons }) => {
+const Persons = ({ filteredPersons,setNewName,persons,setPersons }) => {
+  const handleDelButtonClick = (id) => {
+    const personToDelete = persons.find((person) => person.id === id);
+    const confirmDelete = window.confirm(`Delete ${personToDelete.name}?`);
+    if (confirmDelete) {
+      personService.removeEntry(id).then((response) => {
+        console.log(response);
+        setPersons(persons.filter((person) => person.id !== id));
+      });
+    }
+  };
+  
   return (
     <>
       {filteredPersons.map((person) => (
         <li key={person.id}>
           {person.name} {person.number}
+          <button onClick={()=>handleDelButtonClick(person.id)}>del</button>
+          
         </li>
+        
       ))}
+      
     </>
   );
 };
@@ -119,7 +152,7 @@ const App = () => {
 
       <h3>Numbers</h3>
 
-      <Persons filteredPersons={filteredPersons} />
+      <Persons filteredPersons={filteredPersons} setNewName={setNewName} persons={persons} setPersons={setPersons}/>
     </div>
   );
 };
