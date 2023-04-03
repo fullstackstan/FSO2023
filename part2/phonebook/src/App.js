@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import personService from "./services/persons";
+import './index.css'
+
 
 const Filter = ({ filterName, setFilterName }) => {
   const handleFilterChange = (event) => {
@@ -15,6 +17,8 @@ const Filter = ({ filterName, setFilterName }) => {
   );
 };
 
+
+
 const PersonForm = ({
   setPersons,
   persons,
@@ -23,13 +27,13 @@ const PersonForm = ({
   setNewName,
   setNewNumber,
 }) => {
+  const [notification, setNotification] = useState(null);
+
   const handleNameChange = (event) => {
     setNewName(event.target.value);
-    console.log(event.target.value);
   };
   const handleNumberChange = (event) => {
     setNewNumber(event.target.value);
-    console.log(event.target.value);
   };
 
   const handleSubmit = (event) => {
@@ -51,10 +55,23 @@ const PersonForm = ({
             );
             setNewName("");
             setNewNumber("");
+            setNotification({
+              message: `Updated ${newName}`,
+              type: "success",
+            });
+            setTimeout(() => {
+              setNotification(null);
+            }, 2000);
           })
           .catch((error) => {
             console.log(error.response.data.error);
-            alert(error.response.data.error);
+            setNotification({
+              message: error.response.data.error,
+              type: "error",
+            });
+            setTimeout(() => {
+              setNotification(null);
+            }, 2000);
           });
       }
     } else {
@@ -62,17 +79,38 @@ const PersonForm = ({
         name: newName,
         number: newNumber,
       };
-      personService.create(personObject).then((response) => {
-        setPersons(persons.concat(response.data));
-        setNewName("");
-        setNewNumber("");
-      });
+      personService
+        .create(personObject)
+        .then((response) => {
+          setPersons(persons.concat(response.data));
+          setNewName("");
+          setNewNumber("");
+          setNotification({
+            message: `Added ${newName}`,
+            type: "success",
+          });
+          setTimeout(() => {
+            setNotification(null);
+          }, 2000);
+        })
+        .catch((error) => {
+          console.log(error.response.data.error);
+          setNotification({
+            message: error.response.data.error,
+            type: "error",
+          });
+          setTimeout(() => {
+            setNotification(null);
+          }, 2000);
+        });
     }
   };
-  
 
   return (
     <>
+      {notification && (
+        <div className={notification.type}>{notification.message}</div>
+      )}
       <form onSubmit={handleSubmit}>
         <div>
           name: <input value={newName} onChange={handleNameChange} />
@@ -88,38 +126,44 @@ const PersonForm = ({
   );
 };
 
-const Persons = ({ filteredPersons,setNewName,persons,setPersons }) => {
-  const handleDelButtonClick = (id) => {
-    const personToDelete = persons.find((person) => person.id === id);
-    const confirmDelete = window.confirm(`Delete ${personToDelete.name}?`);
+
+
+const Persons = ({ filteredPersons, setNewName, persons, setPersons, setShowAddedMessage, setShowDeletedMessage }) => {
+  const handleDelButtonClick = (id, name) => {
+    const confirmDelete = window.confirm(`Delete ${name}?`);
     if (confirmDelete) {
       personService.removeEntry(id).then((response) => {
         console.log(response);
         setPersons(persons.filter((person) => person.id !== id));
+        setNewName(`Deleted ${name}`);
+        setShowDeletedMessage(true);
+        setTimeout(() => setShowDeletedMessage(false), 2000);
       });
     }
   };
-  
+
   return (
     <>
       {filteredPersons.map((person) => (
         <li key={person.id}>
           {person.name} {person.number}
-          <button onClick={()=>handleDelButtonClick(person.id)}>del</button>
-          
+          <button onClick={() => handleDelButtonClick(person.id, person.name)}>
+            del
+          </button>
         </li>
-        
       ))}
-      
     </>
   );
 };
+;
+
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [filterName, setFilterName] = useState("");
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
+  const [showAddedMessage,setShowAddedMessage] = useState('null')
 
   const filteredPersons = persons.filter((person) =>
     person.name.toLowerCase().includes(filterName.toLowerCase())
