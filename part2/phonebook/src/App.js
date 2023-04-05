@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import personService from "./services/persons";
+import './index.css'
 
 const Filter = ({ filterName, setFilterName }) => {
   const handleFilterChange = (event) => {
@@ -22,6 +23,8 @@ const PersonForm = ({
   newNumber,
   setNewName,
   setNewNumber,
+  setErrorMessage,
+  setAddedMessage
 }) => {
   const handleNameChange = (event) => {
     setNewName(event.target.value);
@@ -40,6 +43,7 @@ const PersonForm = ({
         `${newName} is already in the phone book. Replace the old number with the new one?`
       );
       if (confirmUpdate) {
+        
         const updatedPerson = { ...existingPerson, number: newNumber };
         personService
           .update(existingPerson.id, updatedPerson)
@@ -51,10 +55,20 @@ const PersonForm = ({
             );
             setNewName("");
             setNewNumber("");
+            setAddedMessage(
+              `${existingPerson.name}'s phone number has been updated`
+            )
+            setTimeout(() => {
+              setAddedMessage(null)
+            }, 5000)
           })
           .catch((error) => {
-            console.log(error.response.data.error);
-            alert(error.response.data.error);
+            setErrorMessage(
+              `'${existingPerson.name}' was not removed from server and this is the message${error.message}`
+            )
+            setTimeout(() => {
+              setErrorMessage(null)
+            }, 5000)
           });
       }
     } else {
@@ -66,6 +80,12 @@ const PersonForm = ({
         setPersons(persons.concat(response.data));
         setNewName("");
         setNewNumber("");
+        setAddedMessage(
+          `'${personObject.name}' was added to the phonebook`
+        )
+        setTimeout(() => {
+          setAddedMessage(null)
+        }, 5000)
       });
     }
   };
@@ -103,7 +123,7 @@ const Persons = ({ filteredPersons,setNewName,persons,setPersons }) => {
   return (
     <>
       {filteredPersons.map((person) => (
-        <li key={person.id}>
+        <li key={person.id} className='note'>
           {person.name} {person.number}
           <button onClick={()=>handleDelButtonClick(person.id)}>del</button>
           
@@ -115,18 +135,57 @@ const Persons = ({ filteredPersons,setNewName,persons,setPersons }) => {
   );
 };
 
+const ErrorNotification = ({ message }) => {
+  if (message === null) {
+    return null
+  }
+
+  return (
+    <div className='error'>
+      {message}
+    </div>
+  )
+}
+const AddedNotification = ({ message }) => {
+  if (message === null) {
+    return null
+  }
+
+  return (
+    <div className='added'>
+      {message}
+    </div>
+  )
+}
+
+const Footer = () => {
+  const footerStyle = {
+    color: 'green',
+    fontStyle: 'italic',
+    fontSize: 16
+  }
+  return (
+    <div style={footerStyle}>
+      <br />
+      <em>Note app, Department of Computer Science, University of Helsinki 2022</em>
+    </div>
+  )
+}
+
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [filterName, setFilterName] = useState("");
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
+  const [errorMessage, setErrorMessage] = useState(null)
+  const [addedMessage, setAddedMessage] = useState(null)
 
   const filteredPersons = persons.filter((person) =>
     person.name.toLowerCase().includes(filterName.toLowerCase())
   );
 
   useEffect(() => {
-    console.log("effect");
+    console.log("use effect");
     personService.getAll().then((response) => {
       console.log("promise fulfilled");
       setPersons(response.data);
@@ -136,6 +195,8 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <ErrorNotification message={errorMessage} />
+      <AddedNotification message={addedMessage} />
 
       <Filter filterName={filterName} setFilterName={setFilterName} />
 
@@ -148,12 +209,16 @@ const App = () => {
         setNewNumber={setNewNumber}
         persons={persons}
         setPersons={setPersons}
+        setErrorMessage={setErrorMessage}
+        setAddedMessage={setAddedMessage}
       />
 
       <h3>Numbers</h3>
 
       <Persons filteredPersons={filteredPersons} setNewName={setNewName} persons={persons} setPersons={setPersons}/>
+      <Footer />
     </div>
+
   );
 };
 
