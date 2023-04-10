@@ -64,7 +64,7 @@ const PersonForm = ({
           })
           .catch((error) => {
             setErrorMessage(
-              `'${existingPerson.name}' was not removed from server and this is the message${error.message}`
+              `'${existingPerson.name}' cannot be updated because they have already been removed from the server`
             )
             setTimeout(() => {
               setErrorMessage(null)
@@ -108,7 +108,7 @@ const PersonForm = ({
   );
 };
 
-const Persons = ({ filteredPersons,setNewName,persons,setPersons }) => {
+const Persons = ({ filteredPersons,setNewName,persons,setPersons,setErrorMessage }) => {
   const handleDelButtonClick = (id) => {
     const personToDelete = persons.find((person) => person.id === id);
     const confirmDelete = window.confirm(`Delete ${personToDelete.name}?`);
@@ -116,7 +116,15 @@ const Persons = ({ filteredPersons,setNewName,persons,setPersons }) => {
       personService.removeEntry(id).then((response) => {
         console.log(response);
         setPersons(persons.filter((person) => person.id !== id));
-      });
+      })
+      .catch((error) => {
+        setErrorMessage(
+          `'${personToDelete.name}' cannot be deleted because they have already been removed from the server`
+        )
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)
+      })
     }
   };
   
@@ -215,7 +223,13 @@ const App = () => {
 
       <h3>Numbers</h3>
 
-      <Persons filteredPersons={filteredPersons} setNewName={setNewName} persons={persons} setPersons={setPersons}/>
+      <Persons 
+      filteredPersons={filteredPersons} 
+      setNewName={setNewName} 
+      persons={persons} 
+      setPersons={setPersons}
+      setErrorMessage={setErrorMessage}
+      />
       <Footer />
     </div>
 
